@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "519590058746",
+    "project_id": "wordmania-8b3d6",
+    "storage_bucket": "wordmania-8b3d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519590058746:android:04f6817e6a45c894104743",
+        "android_client_info": {
+          "package_name": "com.example.wordmania"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD5d7MBd-VjzuiaFXs-Fbbyo0mPVqeDzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
