@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'home_page.dart'; // 👈 Bu dosyayı sen oluşturmuştun
+import '../logic/player_state.dart';
+import '../services/firebase_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -65,22 +66,28 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailController.text.trim(),
                       password: passwordController.text.trim(),
                     );
+
+                    final user = userCredential.user;
+                    if (user != null) {
+                      final oyuncu = await FirebaseService().oyuncuGetir(user.uid);
+                      if (oyuncu != null) {
+                        debugPrint('Oyuncu yüklendi: ${oyuncu.toJson()}');
+                      }
+                    }
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Giriş başarılı!")),
                     );
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
+                    Navigator.pushReplacementNamed(context, '/home');
                   } catch (e) {
+                    debugPrint('Firebase Hata: $e');
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Hata: $e")),
+                      SnackBar(content: Text("Giriş hatası: ${e.toString()}")),
                     );
                   }
                 },

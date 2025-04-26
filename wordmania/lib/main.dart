@@ -1,6 +1,9 @@
+// 🔹 main.dart
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
+import 'game_beginner.dart';
+import 'home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -18,11 +21,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Wordmania',
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF2E8D9), // Arka plan
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF2E8CAB)),
+        scaffoldBackgroundColor: const Color(0xFFF2E8D9),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2E8CAB)),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Wordmania'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Wordmania'),
+        '/game': (context) => const GameBeginnerPage(),
+        '/home': (context) => const HomePage(),
+      },
     );
   }
 }
@@ -43,9 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 40.0),
-              child: const CircleAvatar(
+            const Padding(
+              padding: EdgeInsets.only(bottom: 40.0),
+              child: CircleAvatar(
                 radius: 135,
                 backgroundImage: AssetImage('assets/wordmania_logo.png'),
                 backgroundColor: Colors.transparent,

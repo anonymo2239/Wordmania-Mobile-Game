@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/firebase_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -79,10 +81,19 @@ class _RegisterPageState extends State<RegisterPage> {
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
                       email: emailController.text.trim(),
                       password: passwordController.text.trim(),
                     );
+
+                    final userId = userCredential.user!.uid;
+                    final email = emailController.text.trim();
+
+                    await FirebaseService().ilkOyuncuyuKaydet(
+                      uid: userId,
+                      kullaniciAdi: usernameController.text.trim(),
+                    );
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Kayıt başarılı!")),
                     );
@@ -93,6 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     );
                   }
                 },
+
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   textStyle: const TextStyle(fontSize: 20),
