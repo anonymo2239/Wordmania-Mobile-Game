@@ -15,10 +15,24 @@
 
 ## Screenshots
 
-- Login & Registration
-- Main menu and match history
-- Game board with mine logic
-- Result dialog (win/lose/tie)
+![Login Screen](readme_images/image01.png)  
+*The user logs into the app using email and password.*
+
+![Home Screen](readme_images/image02.png)  
+*The home screen shows the player's win rate and game stats.*
+
+![Game Mode Selection](readme_images/image03.png)  
+*Players choose a game mode with different time limits.*
+
+![Initial Game Board](readme_images/image04.png)  
+*The game board at the beginning, where players place their first word.*
+
+![In-Game Example](readme_images/image05.png)  
+*During gameplay, words are formed and hidden mines are triggered.*
+
+![Mine Types](readme_images/image06.png)  
+*A visual list of mine types and their effects within the game.*
+
 
 ## Technologies Used
 
@@ -73,6 +87,7 @@
 ## Setup
 
 ```bash
+flutter clean
 flutter pub get
 flutter run
 ```
