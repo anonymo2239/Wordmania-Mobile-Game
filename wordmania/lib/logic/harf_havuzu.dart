@@ -42,5 +42,5 @@ class HarfHavuzu {
   void harfleriGeriEkle(List<String> harfler) {
     _aktifHavuz.addAll(harfler);
     _aktifHavuz.shuffle();
-  }
+}
 }

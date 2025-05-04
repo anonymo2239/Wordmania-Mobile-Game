@@ -11,7 +11,7 @@ class GameBeginnerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2E8D9), // Krem arka plan
+      backgroundColor: const Color(0xFFF2E8D9),
       appBar: AppBar(
         title: const Text('Yeni Oyun', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.transparent,
@@ -19,11 +19,11 @@ class GameBeginnerPage extends StatelessWidget {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: Center( // 🔥 Body'yi tam ortaladık
+      body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center, // 🔥 Ortalamayı garantiledik
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
@@ -31,7 +31,7 @@ class GameBeginnerPage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0077B6), // Güzel bir mavi tonu
+                  color: Color(0xFF0077B6),
                 ),
               ),
               const SizedBox(height: 16),
@@ -70,6 +70,7 @@ class GameBeginnerPage extends StatelessWidget {
             if (oyuncu != null) {
               final roomId = await RoomService().findOrCreateRoom(text);
               if (roomId != null) {
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -96,8 +97,8 @@ class GameBeginnerPage extends StatelessWidget {
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFFA500), // Turuncu
-          foregroundColor: Colors.white, // Yazı rengi
+          backgroundColor: const Color(0xFFFFA500),
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),

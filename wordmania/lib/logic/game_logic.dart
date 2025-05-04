@@ -3,8 +3,10 @@
 import 'player_state.dart';
 
 class GameLogic {
-  final List<List<String?>> tahta =
-      List.generate(15, (_) => List.generate(15, (_) => null));
+  final List<List<String?>> tahta = List.generate(
+    15,
+    (_) => List<String?>.generate(15, (_) => null),
+  );
 
   final Map<String, int> harfPuanlari = {
     'A': 1, 'E': 1, 'İ': 1, 'K': 2, 'L': 1, 'M': 2,
@@ -13,6 +15,7 @@ class GameLogic {
     'G': 5, 'P': 5, 'Ş': 5, 'Ç': 5, 'V': 7, 'F': 7,
     'J': 8, 'Ğ': 8
   };
+
 
   bool harfYerlestir({
     required int satir,
@@ -49,6 +52,6 @@ class GameLogic {
   void tahtaYazdir() {
     for (var satir in tahta) {
       print(satir.map((e) => e ?? '_').join(' '));
-    }
-  }
+}
+}
 }

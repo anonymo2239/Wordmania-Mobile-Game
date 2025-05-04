@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../logic/player_state.dart';
-import '../services/firebase_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF2E8D9),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -36,10 +35,12 @@ class _LoginPageState extends State<LoginPage> {
               backgroundImage: AssetImage('assets/wordmania_logo.png'),
             ),
             const SizedBox(height: 20),
-            const Text('Giriş Yap', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            const Text(
+              'Giriş Yap',
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 30),
 
-            // E-posta
             TextField(
               controller: emailController,
               decoration: const InputDecoration(
@@ -49,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20),
 
-            // Şifre
             TextField(
               controller: passwordController,
               obscureText: true,
@@ -60,38 +60,44 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 30),
 
-            // Giriş Butonu
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
                   try {
-                    final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: emailController.text.trim(),
                       password: passwordController.text.trim(),
                     );
 
-                    final user = userCredential.user;
-                    if (user != null) {
-                      final oyuncu = await FirebaseService().oyuncuGetir(user.uid);
-                      if (oyuncu != null) {
-                        debugPrint('Oyuncu yüklendi: ${oyuncu.toJson()}');
-                      }
+                    if (!mounted) return;
+                    Navigator.pushReplacementNamed(context, '/home');
+
+                  } on FirebaseAuthException catch (e) {
+                    String mesaj = "Bir hata oluştu";
+
+                    if (e.code == 'user-not-found') {
+                      mesaj = 'Kullanıcı bulunamadı.';
+                    } else if (e.code == 'wrong-password') {
+                      mesaj = 'Hatalı şifre.';
+                    } else if (e.code == 'invalid-email') {
+                      mesaj = 'Geçersiz e-posta.';
                     }
 
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Giriş başarılı!")),
+                      SnackBar(content: Text(mesaj)),
                     );
-
-                    Navigator.pushReplacementNamed(context, '/home');
                   } catch (e) {
-                    debugPrint('Firebase Hata: $e');
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Giriş hatası: ${e.toString()}")),
+                      SnackBar(content: Text("Beklenmeyen bir hata: $e")),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFA500),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   textStyle: const TextStyle(fontSize: 20),
                 ),

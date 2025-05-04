@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firebase_service.dart';
+import '../services/room_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -18,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF2E8D9),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -80,32 +82,88 @@ class _RegisterPageState extends State<RegisterPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () async {
+                  final email = emailController.text.trim();
+                  final password = passwordController.text.trim();
+                  final username = usernameController.text.trim();
+
+                  if (!isValidPassword(password)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Şifre en az 8 karakter uzunluğunda olmalı,\nbüyük harf, küçük harf ve rakam içermelidir.",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+
                   try {
-                    final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
+                    final userCredential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                          email: email,
+                          password: password,
+                        );
 
-                    final userId = userCredential.user!.uid;
-                    final email = emailController.text.trim();
+                    final uid = userCredential.user!.uid;
 
-                    await FirebaseService().ilkOyuncuyuKaydet(
-                      uid: userId,
-                      kullaniciAdi: usernameController.text.trim(),
-                    );
+                    // Firestore'da kullanıcıyı oluştur
+                    await FirebaseFirestore.instance
+                        .collection('oyuncular')
+                        .doc(uid)
+                        .set({
+                      'uid': uid,
+                      'kullaniciAdi': username,
+                      'skor': 0,
+                      'harfler': [],
+                    });
 
+                    // Oda oluştur veya bul
+                    final roomId = await RoomService().findOrCreateRoom('2 dakika');
+
+                    if (roomId != null) {
+                      await FirebaseService().ilkOyuncuyuKaydet(
+                        uid: uid,
+                        kullaniciAdi: username,
+                        roomId: roomId,
+                      );
+
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Kayıt başarılı!")),
+                      );
+                      Navigator.pop(context);
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Oda oluşturulamadı.")),
+                      );
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    String mesaj = "Bir hata oluştu";
+
+                    if (e.code == 'email-already-in-use') {
+                      mesaj = 'Bu e-posta zaten kayıtlı.';
+                    } else if (e.code == 'weak-password') {
+                      mesaj = 'Şifre çok zayıf.';
+                    } else if (e.code == 'invalid-email') {
+                      mesaj = 'Geçersiz e-posta adresi.';
+                    }
+
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Kayıt başarılı!")),
+                      SnackBar(content: Text(mesaj)),
                     );
-                    Navigator.pop(context); // Giriş ekranına dön
                   } catch (e) {
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Hata: $e")),
+                      SnackBar(content: Text("Beklenmeyen hata: $e")),
                     );
                   }
                 },
-
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFA500),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   textStyle: const TextStyle(fontSize: 20),
                 ),
@@ -116,5 +174,15 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  // Şifre kontrol fonksiyonu
+  bool isValidPassword(String password) {
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    final hasLowercase = password.contains(RegExp(r'[a-z]'));
+    final hasDigit = password.contains(RegExp(r'\d'));
+    final hasMinLength = password.length >= 8;
+
+    return hasUppercase && hasLowercase && hasDigit && hasMinLength;
   }
 }

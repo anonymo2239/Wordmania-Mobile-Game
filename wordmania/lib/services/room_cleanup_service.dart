@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+  import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RoomCleanupService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -22,6 +22,6 @@ class RoomCleanupService {
       print('Oda temizliği tamamlandı.');
     } catch (e) {
       print('Oda temizleme hatası: $e');
-    }
-  }
+}
+}
 }

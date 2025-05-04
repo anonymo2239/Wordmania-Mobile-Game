@@ -22,6 +22,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     fetchKullaniciVerisi();
   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchKullaniciVerisi();
+  }
 
   Future<void> fetchKullaniciVerisi() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -29,10 +34,13 @@ class _HomePageState extends State<HomePage> {
       final doc = await FirebaseFirestore.instance.collection('oyuncular').doc(uid).get();
       if (doc.exists) {
         final oyuncu = Oyuncu.fromJson(doc.data()!);
-        setState(() {
-          kullaniciAdi = oyuncu.kullaniciAdi;
-          // ileride kazanma oranı ve oyun istatistiklerini buradan da çekebiliriz
-        });
+        if (mounted) {
+          setState(() {
+            kullaniciAdi = oyuncu.kullaniciAdi;
+            kazanilanOyunlar = oyuncu.kazanim ?? 0;
+            toplamOyunlar = oyuncu.oyunlar ?? 0;
+          });
+        }
       }
     }
   }
@@ -109,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                 textColor: Colors.black,
                 borderColor: const Color(0xFF0077B6),
                 onPressed: () {
-                  // Geçmiş oyunlar sayfasına yönlendirme buraya eklenecek
+                  Navigator.pushNamed(context, '/finished');
                 },
               ),
             ],
@@ -165,7 +173,7 @@ class _HomePageState extends State<HomePage> {
           textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         child: Text(text),
-      ),
-    );
-  }
+     ),
+);
+}
 }

@@ -1,16 +1,18 @@
-// lib/logic/player_state.dart
-
 class Oyuncu {
   final String uid;
   final String kullaniciAdi;
   int skor;
   List<String> harfler;
+  int oyunlar;
+  int kazanim;
 
   Oyuncu({
     required this.uid,
     required this.kullaniciAdi,
     this.skor = 0,
     this.harfler = const [],
+    this.oyunlar = 0,
+    this.kazanim = 0,
   });
 
   void harfleriGuncelle(List<String> yeniHarfler) {
@@ -35,6 +37,8 @@ class Oyuncu {
       'kullaniciAdi': kullaniciAdi,
       'skor': skor,
       'harfler': harfler,
+      'oyunlar': oyunlar,
+      'kazanim': kazanim,
     };
   }
 
@@ -44,6 +48,8 @@ class Oyuncu {
       kullaniciAdi: json['kullaniciAdi'],
       skor: json['skor'],
       harfler: List<String>.from(json['harfler']),
+      oyunlar: json['oyunlar'] ?? 0,
+      kazanim: json['kazanim'] ?? 0,
     );
   }
 }
